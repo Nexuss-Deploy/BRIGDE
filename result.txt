@@ -1,0 +1,17 @@
+--- Starting Local Bridge Self-Test ---
+Targeting: https://nexuss-education.gt.tc/luxury_bot_bridge.php
+
+[1/3] Fetching AES Challenge...
+Challenge detected. Solving...
+[2/3] Challenge Solved: __test=8c373e9e884a900ddf0f97f1e32be6cb
+[3/3] Verifying bypass and file existence...
+HTTP Response Status: 200
+Server Response:
+{
+  "status": "online",
+  "bot": "Nexuss Library",
+  "can_reach_telegram": true,
+  "timestamp": "2026-06-17 09:40:25"
+}
+
+✅ SUCCESS: Bridge is fully operational!
