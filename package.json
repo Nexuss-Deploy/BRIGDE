@@ -1,0 +1,9 @@
+{
+  "name": "nexuss-telegram-bridge",
+  "version": "1.0.0",
+  "description": "Vercel Bridge for InfinityFree Telegram Bot",
+  "main": "api/bridge.js",
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
