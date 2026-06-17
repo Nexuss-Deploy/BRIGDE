@@ -25,11 +25,12 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.statusCode = 200;
+    res.end();
+    return;
   }
 
   try {
-    // Step 1: Initial Request
     const initialRes = await request(TARGET_URL, {
       method: 'GET',
       headers: { 'User-Agent': USER_AGENT }
@@ -56,10 +57,23 @@ module.exports = async (req, res) => {
           'Cookie': cookie ? `__test=${cookie}` : ''
         }
       });
-      return res.status(200).json({ success: true, wake_result: pollRes.data });
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ success: true, wake_result: pollRes.data }));
+      return;
     }
 
     // Forward POST
+    // We need to collect the body from req if not already available
+    let body = req.body;
+    if (req.method === 'POST' && !body) {
+        body = await new Promise((resolve) => {
+            let data = '';
+            req.on('data', chunk => data += chunk);
+            req.on('end', () => resolve(data));
+        });
+    }
+
     const forwardRes = await request(TARGET_URL + '?i=1', {
       method: 'POST',
       headers: {
@@ -67,11 +81,14 @@ module.exports = async (req, res) => {
         'Content-Type': 'application/json',
         'Cookie': cookie ? `__test=${cookie}` : ''
       }
-    }, req.body);
+    }, body);
 
-    res.status(forwardRes.status).send(forwardRes.data);
+    res.statusCode = forwardRes.status;
+    res.end(forwardRes.data);
 
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ success: false, error: error.message }));
   }
 };
